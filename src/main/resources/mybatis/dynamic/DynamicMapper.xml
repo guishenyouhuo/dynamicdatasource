@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guigui.dynamic.dao.DynamicMapper" >
+
+  <select id="selectAllColumns" parameterType="string" resultType="string" useCache="false" flushCache="true">
+  	select COLUMN_NAME from information_schema.COLUMNS where TABLE_SCHEMA = #{schema} and TABLE_NAME = #{tableName}
+  </select>
+  
+  <select flushCache="true" id="selectPrimaryKeyNames" resultType="string" useCache="false">
+  	SELECT c.COLUMN_NAME FROM 
+	information_schema.TABLE_CONSTRAINTS AS t, information_schema.KEY_COLUMN_USAGE AS c
+	WHERE t.TABLE_NAME = c.TABLE_NAME AND t.TABLE_SCHEMA = c.TABLE_SCHEMA
+	AND t.TABLE_SCHEMA = #{schema} AND t.TABLE_NAME = #{tableName}
+	AND t.CONSTRAINT_TYPE = 'PRIMARY KEY' AND c.CONSTRAINT_NAME = 'PRIMARY';
+  </select>
+
+</mapper>

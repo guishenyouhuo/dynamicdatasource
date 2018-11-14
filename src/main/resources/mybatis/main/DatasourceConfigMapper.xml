@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guigui.main.dao.DatasourceConfigMapper" >
+  <resultMap id="BaseResultMap" type="com.guigui.main.models.DatasourceConfig" >
+    <id column="bean_id" property="beanId" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="maxActive" property="maxactive" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="ds_key" property="dsKey" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    bean_id, url, user_name, password, maxActive, type, ds_key
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from datasource_config
+    where bean_id = #{beanId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAllDataSource" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from datasource_config
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from datasource_config
+    where bean_id = #{beanId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.guigui.main.models.DatasourceConfig" >
+    insert into datasource_config (bean_id, url, user_name, 
+      password, maxActive, type, 
+      ds_key)
+    values (#{beanId,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{maxactive,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{dsKey,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guigui.main.models.DatasourceConfig" >
+    insert into datasource_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="beanId != null" >
+        bean_id,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="maxactive != null" >
+        maxActive,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="dsKey != null" >
+        ds_key,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="beanId != null" >
+        #{beanId,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="maxactive != null" >
+        #{maxactive,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="dsKey != null" >
+        #{dsKey,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guigui.main.models.DatasourceConfig" >
+    update datasource_config
+    <set >
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="maxactive != null" >
+        maxActive = #{maxactive,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="dsKey != null" >
+        ds_key = #{dsKey,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where bean_id = #{beanId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guigui.main.models.DatasourceConfig" >
+    update datasource_config
+    set url = #{url,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      maxActive = #{maxactive,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      ds_key = #{dsKey,jdbcType=VARCHAR}
+    where bean_id = #{beanId,jdbcType=VARCHAR}
+  </update>
+</mapper>

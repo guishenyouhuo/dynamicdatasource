@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    <!-- 配置数据源 -->
+    <!-- 其他多个数据源配置从配置表中读取，并在应用启动时进行加载(动态注入Spring容器) -->
+    <bean id="dynamicBaseDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="url" value="jdbc:mysql://localhost:3306?useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+
+    <!-- 配置数据源路由，targetDataSources.key作为数据源唯一标识 -->
+    <bean id="dynamicDataSource" class="com.guigui.datasource.DynamicDataSource">
+        <property name="targetDataSources">
+            <map>
+                <!-- 其他多个数据源配置从配置表中读取，并在应用启动时进行加载(动态注入Spring容器) -->
+                <entry key="defaultDS" value-ref="dynamicBaseDataSource"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="dynamicSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dynamicDataSource" />
+        <property name="configLocation" value="classpath:/mybatis/mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath*:/mybatis/dynamic/*.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.guigui.dynamic.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="dynamicSqlSessionFactory"/>
+    </bean>
+
+    <bean id="dynamicDataSourceSelector" class="com.guigui.datasource.DataSourceSelector" />
+
+    <!-- 事务管理相关配置... -->
+    <bean id="dynamicTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dynamicDataSource"/>
+    </bean>
+
+    <aop:config>
+        <aop:pointcut id="dynamicTxOperation" expression="execution(* com.guigui.dynamic.service.*Service.*(..))" />
+        <aop:advisor id="dynamicAdvisor" pointcut-ref="dynamicTxOperation" advice-ref="dynamicAdvice"/>
+    </aop:config>
+
+    <tx:advice id="dynamicAdvice" transaction-manager="dynamicTransactionManager">
+        <tx:attributes>
+            <tx:method name="*InTrx" propagation="REQUIRED" />
+            <tx:method name="*InNewTrx" propagation="REQUIRES_NEW" />
+            <tx:method name="*NoTrx" propagation="NOT_SUPPORTED" />
+            <tx:method name="*" propagation="SUPPORTS" />
+        </tx:attributes>
+    </tx:advice>
+
+</beans>
